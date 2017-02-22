@@ -59,6 +59,14 @@ namespace NHibernate.Loader.Hql
 			get { return HasSubselectLoadableCollections(); }
 		}
 
+	    protected override SqlString ApplyOptions(SqlString sql, string options, Dialect.Dialect dialect)
+	    {
+	        if (!dialect.SupportOptions || String.IsNullOrEmpty(options))
+	            return sql;
+
+	        return dialect.ApplyOptions(sql, options);
+	    }
+
 		protected override SqlString ApplyLocks(SqlString sql, IDictionary<string, LockMode> lockModes,
 												Dialect.Dialect dialect)
 		{

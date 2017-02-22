@@ -178,12 +178,17 @@ namespace NHibernate.Loader
 			return sql;
 		}
 
-		/// <summary>
-		/// Does this query return objects that might be already cached by 
-		/// the session, whose lock mode may need upgrading.
-		/// </summary>
-		/// <returns></returns>
-		protected virtual bool UpgradeLocks()
+	    protected virtual SqlString ApplyOptions(SqlString sql, string options, Dialect.Dialect dialect)
+	    {
+	        return sql;
+	    }
+
+        /// <summary>
+        /// Does this query return objects that might be already cached by 
+        /// the session, whose lock mode may need upgrading.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual bool UpgradeLocks()
 		{
 			return false;
 		}
@@ -205,6 +210,10 @@ namespace NHibernate.Loader
 		protected virtual SqlString PreprocessSQL(SqlString sql, QueryParameters parameters, Dialect.Dialect dialect)
 		{
 			sql = ApplyLocks(sql, parameters.LockModes, dialect);
+
+		    RowSelection rowSelection = parameters.RowSelection;
+		    if (rowSelection != null && !String.IsNullOrEmpty(rowSelection.Option))
+		        sql = ApplyOptions(sql, rowSelection.Option, dialect);
 
 			return Factory.Settings.IsCommentsEnabled ? PrependComment(sql, parameters) : sql;
 		}
@@ -1191,8 +1200,8 @@ namespace NHibernate.Loader
 		{
 			ISqlCommand sqlCommand = CreateSqlCommand(queryParameters, session);
 			SqlString sqlString = sqlCommand.Query;
-
-			sqlCommand.ResetParametersIndexesForTheCommand(0);
+            
+            sqlCommand.ResetParametersIndexesForTheCommand(0);
 			var command = session.Batcher.PrepareQueryCommand(CommandType.Text, sqlString, sqlCommand.ParameterTypes);
 
 			try

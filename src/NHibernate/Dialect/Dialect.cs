@@ -554,7 +554,7 @@ namespace NHibernate.Dialect
 		///  </summary>
 		/// <param name="lockMode">The lock mode to apply </param>
 		/// <param name="tableName">The name of the table to which to apply the lock hint. </param>
-		/// <returns> The table with any required lock hints. </returns>
+		/// <returns> The table with any required lock options. </returns>
 		public virtual string AppendLockHint(LockMode lockMode, string tableName)
 		{
 			return tableName;
@@ -1399,15 +1399,33 @@ namespace NHibernate.Dialect
 			}
 		}
 
-		#endregion
+        #endregion
 
-		#region Limit/offset support
+        #region QueryHint support
 
-		/// <summary>
-		/// Does this Dialect have some kind of <c>LIMIT</c> syntax?
-		/// </summary>
-		/// <value>False, unless overridden.</value>
-		public virtual bool SupportsLimit
+        /// <summary>
+        /// Does this Dialect have some kind of <c>OPTION (RECOMPILE)</c> syntax?
+        /// </summary>
+        /// <value>False, unless overridden.</value>
+	    public virtual bool SupportOptions
+	    {
+            get { return false; }
+	    }
+
+        public virtual SqlString ApplyOptions(SqlString queryString, string options)
+        {
+            throw new NotSupportedException("Dialect does not have support for query options.");
+        }
+
+        #endregion
+
+        #region Limit/offset support
+
+        /// <summary>
+        /// Does this Dialect have some kind of <c>LIMIT</c> syntax?
+        /// </summary>
+        /// <value>False, unless overridden.</value>
+        public virtual bool SupportsLimit
 		{
 			get { return false; }
 		}

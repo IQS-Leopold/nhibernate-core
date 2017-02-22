@@ -174,6 +174,15 @@ namespace NHibernate
 		/// <param name="firstResult">The first row to retrieve.</param>
 		IQuery SetFirstResult(int firstResult);
 
+        /// <summary>
+        /// Allows to set a query option.
+        /// </summary>
+        /// <remarks>
+        /// Hints are only set, if the database dialect supports this feature.
+        /// </remarks>
+        /// <param name="option">The option to set for the query.</param>
+	    IQuery SetOption(string option);
+
 		/// <summary>
 		/// Set the read-only mode for entities (and proxies) loaded by this query. This setting 
 		/// overrides the default setting for the session (see <see cref="ISession.DefaultReadOnly" />).
